@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "../../roof-control-fw"
+		},
+		{
+			"name": "telescope-control-fw",
+			"path": ".."
+		}
+	],
+	"settings": {}
+}
