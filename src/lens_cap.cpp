@@ -1,6 +1,13 @@
 #include "lens_cap.h"
 #include <Arduino.h>
 
+#define SERVO_MIN 500
+#define SERVO_MAX 2500
+#define IN_MIN 0
+#define IN_MAX 270
+#define CLOSED_FQ  ((long)107 - IN_MIN) * (SERVO_MAX - SERVO_MIN) / (IN_MAX - IN_MIN) + SERVO_MIN;
+#define OPEN_FQ  ((long)200 - IN_MIN) * (SERVO_MAX - SERVO_MIN) / (IN_MAX - IN_MIN) + SERVO_MIN;
+
 LensCap::LensCap(int control_pin, int open_pin, int close_pin)
     : _control_pin(control_pin),
     _open_pin(open_pin),
@@ -8,8 +15,9 @@ LensCap::LensCap(int control_pin, int open_pin, int close_pin)
         driver_state = CapState::CAP_STATE_CLOSED;
         manual_state = CapState::CAP_STATE_UNDEF;
         real_state = CapState::CAP_STATE_CLOSED;
-        
+        _current_angle = CLOSED_FQ;
     }
+    
 
 void LensCap::setup() {
     _cap_servo.attach(_control_pin, 620, 2420);
@@ -35,22 +43,44 @@ void LensCap::update() {
     }
 
     if (manual_state == CapState::CAP_STATE_OPEN) {
-        _cap_servo.write(180);
+        _target_angle = OPEN_FQ;
         real_state = CapState::CAP_STATE_OPEN;
     }
     else if (manual_state == CapState::CAP_STATE_CLOSED) {
-        _cap_servo.write(0);
+        _target_angle = CLOSED_FQ;
         real_state = CapState::CAP_STATE_CLOSED;
     }
     else {
         if (driver_state == CapState::CAP_STATE_OPEN) {
-            _cap_servo.write(180);
+            _target_angle = OPEN_FQ;
             real_state = CapState::CAP_STATE_OPEN;
         }
         else {
-            _cap_servo.write(0);
+            _target_angle = CLOSED_FQ;
             real_state = CapState::CAP_STATE_CLOSED;
         }
     }
 
+    moveServo();
+}
+
+void LensCap::moveServo() {
+    unsigned long current_time = micros();
+    if (current_time - _last_update_time >= _step_delay) {
+        if (_current_angle < _target_angle) {
+            _current_angle += _step_size;
+            if (_current_angle > _target_angle) {
+                _current_angle = _target_angle;
+            }
+        }
+        else if (_current_angle > _target_angle) {
+            _current_angle -= _step_size;
+            if (_current_angle < _target_angle) {
+                _current_angle = _target_angle;
+            }
+        }
+
+        _cap_servo.writeMicroseconds(_current_angle);
+        _last_update_time = current_time;
+    }
 }

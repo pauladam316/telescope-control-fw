@@ -19,7 +19,7 @@ public:
     void open();
     void close();
     void update();
-
+    void moveServo();
     CapState manual_state; //state commanded by switches, takes precedence over driver
     CapState driver_state;
     CapState real_state; // actual state of the light
@@ -29,6 +29,11 @@ private:
     int _open_pin;
     int _close_pin;
     Servo _cap_servo;
+    int _current_angle;
+    int _target_angle;
+    const int _step_delay = 2000; // Delay between steps in microseconds
+    const int _step_size = 1;   // Change in angle per step
+    unsigned long _last_update_time = 0;
 };
 
 #endif

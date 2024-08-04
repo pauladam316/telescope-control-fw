@@ -13,7 +13,7 @@ int Thermistor::readADC() {
     int total = 0;
     for (int i = 0; i < _numSamples; i++) {
         total += analogRead(_pin);
-        delay(10);  // Small delay between samples to get stable readings
+        //delay(10);  // Small delay between samples to get stable readings
     }
     return total / _numSamples;
 }
