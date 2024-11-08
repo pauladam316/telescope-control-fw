@@ -112,6 +112,7 @@ HeaterConfig heater_1_config = {
     &temp_reference_sensor,
     2,
     2,
+    10,
 };
 
 HeaterConfig heater_2_config = {
@@ -122,6 +123,7 @@ HeaterConfig heater_2_config = {
     &temp_reference_sensor,
     2,
     2,
+    15,
 };
 
 HeaterConfig heater_3_config = {
@@ -132,6 +134,7 @@ HeaterConfig heater_3_config = {
     &temp_reference_sensor,
     2,
     2,
+    20,
 };
 
 Heater heater_1(heater_1_config);

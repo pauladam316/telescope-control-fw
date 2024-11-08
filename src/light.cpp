@@ -2,7 +2,7 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 
-#define LIGHT_STATE_EEPROM_ADDR 10
+#define LIGHT_STATE_EEPROM_ADDR 5
 
 Light::Light(int control_pin, int on_pin, int off_pin)
     : _control_pin(control_pin),

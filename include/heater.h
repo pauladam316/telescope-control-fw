@@ -12,6 +12,7 @@ struct HeaterConfig {
     Thermistor* reference_temp_sensor;
     float temp_delta; //how many degrees above the reference temp to keep the heater at
     float hysteresis; //in degrees c
+    int eeprom_addr;
 };
 
 typedef enum {
@@ -48,6 +49,7 @@ private:
     Thermistor* _reference_temp_sensor;
     float _temp_delta;
     float _hysteresis; 
+    int _eeprom_addr;
 };
 
 #endif
