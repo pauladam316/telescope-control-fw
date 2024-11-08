@@ -1,11 +1,15 @@
 #include "light.h"
 #include <Arduino.h>
+#include <EEPROM.h>
+
+#define LIGHT_STATE_EEPROM_ADDR 10
 
 Light::Light(int control_pin, int on_pin, int off_pin)
     : _control_pin(control_pin),
     _on_pin(on_pin),
     _off_pin(off_pin) { 
-        driver_state = LightState::LIGHT_STATE_OFF;
+        EEPROM.get(LIGHT_STATE_EEPROM_ADDR, driver_state);
+        //driver_state = LightState::LIGHT_STATE_OFF;
         manual_state = LightState::LIGHT_STATE_UNDEF;
         real_state = LightState::LIGHT_STATE_OFF;
     }
@@ -13,10 +17,12 @@ Light::Light(int control_pin, int on_pin, int off_pin)
 
 void Light::turn_on() {
     driver_state = LightState::LIGHT_STATE_ON;
+    EEPROM.put(LIGHT_STATE_EEPROM_ADDR, driver_state);
 }
 
 void Light::turn_off() {
     driver_state = LightState::LIGHT_STATE_OFF;
+    EEPROM.put(LIGHT_STATE_EEPROM_ADDR, driver_state);
 }
 
 void Light::update() {

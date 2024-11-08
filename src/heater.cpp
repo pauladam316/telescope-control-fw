@@ -1,5 +1,8 @@
 #include "heater.h"
 #include <Arduino.h>
+#include <EEPROM.h>
+
+#define HEATER_STATE_EEPROM_ADDR 5
 
 Heater::Heater(const HeaterConfig& config)
     : _heater_pin(config.heater_pin),
@@ -9,7 +12,8 @@ Heater::Heater(const HeaterConfig& config)
       _hysteresis(config.hysteresis),
       _heater_on_pin(config.heater_on_pin),
       _heater_off_pin(config.heater_off_pin) {
-        driver_state = HeaterCommandState::HEATER_STATE_OFF;
+        EEPROM.get(HEATER_STATE_EEPROM_ADDR, driver_state);
+        //driver_state = HeaterCommandState::HEATER_STATE_OFF;
         manual_state = HeaterCommandState::HEATER_STATE_UNDEF;
         real_state = HeaterState::HEATER_STATUS_OFF;
 }
@@ -17,10 +21,12 @@ Heater::Heater(const HeaterConfig& config)
 
 void Heater::disable_active_control() {
     driver_state = HeaterCommandState::HEATER_STATE_OFF;
+    EEPROM.put(HEATER_STATE_EEPROM_ADDR, driver_state);
 }
 
 void Heater::enable_active_control() {
     driver_state = HeaterCommandState::HEATER_STATE_ON;    
+    EEPROM.put(HEATER_STATE_EEPROM_ADDR, driver_state);
 }
 
 void Heater::update() {
